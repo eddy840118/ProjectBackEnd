@@ -1,94 +1,106 @@
 var express = require('express');
 
 
-var routes = function(Game){
+var routes = function (Game) {
     var gameRouter = express.Router();
 
     gameRouter.route('/')
-        .post(function(req, res){
+        .post(function (req, res) {
             var game = new Game(req.body);
 
 
-            user.save();
-            res.status(201).send(user);
+            game.save();
+            res.status(201).send(game);
 
         })
-        .get(function(req,res){
+        .get(function (req, res) {
 
             var query = {};
 
-            if(req.query.genre)
-            {
+            if (req.query.genre) {
                 query.genre = req.query.genre;
             }
-            User.find(query, function(err,users){
-                if(err)
+            Game.find(query, function (err, games) {
+                if (err)
                     res.status(500).send(err);
                 else
-                    res.json(users);
+                    res.json(games);
             });
         });
 
-    userRouter.use('/:userId', function(req,res,next){
-        User.findById(req.params.userId, function(err,user){
-            if(err)
+    gameRouter.use('/id/:gameId', function (req, res, next) {
+        Game.findById(req.params.gameId, function (err, game) {
+            if (err)
                 res.status(500).send(err);
-            else if(user)
-            {
-                req.user = user;
+            else if (game) {
+                req.game = game;
                 next();
             }
-            else
-            {
-                res.status(404).send('no user found');
+            else {
+                res.status(404).send('no game found');
             }
         });
     });
-    userRouter.route('/:userId')
-        .get(function(req,res){
+    gameRouter.route('/id/:gameId')
+        .get(function (req, res) {
 
-            res.json(req.user);
+            res.json(req.game);
 
         })
-        .put(function(req,res){
-            req.user.username = req.body.username;
-            req.user.password = req.body.password;
-            req.user.email = req.body.email;
-            req.user.save(function(err){
-                if(err)
+        .put(function (req, res) {
+            req.game.title = req.body.title;
+            req.game.author = req.body.author;
+            req.game.genre = req.body.genre;
+            req.game.read = req.body.read;
+            req.game.save(function (err) {
+                if (err)
                     res.status(500).send(err);
-                else{
-                    res.json(req.user);
+                else {
+                    res.json(req.game);
                 }
             });
         })
-        .patch(function(req,res){
-            if(req.body._id)
+        .patch(function (req, res) {
+            if (req.body._id)
                 delete req.body._id;
 
-            for(var p in req.body)
-            {
-                req.user[p] = req.body[p];
+            for (var p in req.body) {
+                req.game[p] = req.body[p];
             }
 
-            req.user.save(function(err){
-                if(err)
+            req.game.save(function (err) {
+                if (err)
                     res.status(500).send(err);
-                else{
-                    res.json(req.user);
+                else {
+                    res.json(req.game);
                 }
             });
         })
-        .delete(function(req,res){
-            req.user.remove(function(err){
-                if(err)
+        .delete(function (req, res) {
+            req.game.remove(function (err) {
+                if (err)
                     res.status(500).send(err);
-                else{
+                else {
                     res.status(204).send('Removed');
                 }
             });
         });
-    return userRouter;
+
+    gameRouter.route('/get-all-games-for-user')
+        .post(function (req, res) {
+
+            Game.find({ user_id: req.body.userID }, function (err, games) {
+                console.log('from get all games for user err: ', err, 'games: ', games);
+                if (err) {
+                    res.status(500).send(err);
+                } else if (games.length == 0) {
+                    res.status(201).send({ errorMessage: "Game not found or no games in the database yet!" });
+                } else {
+                    res.status(201).send(games);
+                }
+            });
+        })
+    return gameRouter;
 };
 
 module.exports = routes;
