@@ -33,6 +33,11 @@ var Book = require('./models/bookModel');
 bookRouter = require('./Routes/bookRoutes')(Book);
 app.use('/api/books', bookRouter);
 
+// mount book endpoints
+var Game = require('./models/gameModel');
+gameRouter = require('./Routes/gameRoutes')(Game);
+app.use('/api/games', gameRouter);
+
 // mount user endpoints
 var User = require('./models/userModel');
 userRouter = require('./Routes/userRoutes')(User);

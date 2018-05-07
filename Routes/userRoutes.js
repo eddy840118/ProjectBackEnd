@@ -46,7 +46,7 @@ var routes = function (User) {
     .put(function (req, res) {
       req.user.username = req.body.username;
       req.user.password = req.body.password;
-      req.user.email = req.body.email;
+      req.user.Email = req.body.Email;
       req.user.save(function (err) {
         if (err)
           res.status(500).send(err);

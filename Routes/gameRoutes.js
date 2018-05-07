@@ -17,8 +17,8 @@ var routes = function (Game) {
 
             var query = {};
 
-            if (req.query.genre) {
-                query.genre = req.query.genre;
+            if (req.query.category) {
+                query.category = req.query.category;
             }
             Game.find(query, function (err, games) {
                 if (err)
@@ -48,10 +48,10 @@ var routes = function (Game) {
 
         })
         .put(function (req, res) {
-            req.game.title = req.body.title;
-            req.game.author = req.body.author;
-            req.game.genre = req.body.genre;
-            req.game.read = req.body.read;
+            req.game.name = req.body.name;
+            req.game.category = req.body.category;
+            req.game.platform = req.body.platform;
+            req.game.publisher = req.body.publisher;
             req.game.save(function (err) {
                 if (err)
                     res.status(500).send(err);
